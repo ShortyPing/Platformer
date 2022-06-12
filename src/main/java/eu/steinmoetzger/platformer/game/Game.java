@@ -48,7 +48,7 @@ public class Game {
     }
 
     public void createWindow() {
-        entity = new Entity(null, new Location(0.5f, 0.5f, 0));
+        entity = new Entity(null, new Location(300f, 300f, 0));
         entity.load();
         entity.show();
         this.initProcedure();
@@ -58,11 +58,27 @@ public class Game {
 
 
     private void handleKeyInput(long window, int key, int scancode, int action, int mods) {
-        System.out.println(mods);
+
         if(key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
             glfwSetWindowShouldClose(window, true);
         }
-        entity.getLocation().addX(0.01f);
+
+        if(key == GLFW_KEY_W) {
+
+            entity.getLocation().deductY(1f);
+        }
+
+        if(key == GLFW_KEY_A) {
+            entity.getLocation().deductX(1f);
+        }
+
+        if(key == GLFW_KEY_S) {
+            entity.getLocation().addY(1f);
+        }
+
+        if(key == GLFW_KEY_D) {
+            entity.getLocation().addX(1f);
+        }
     }
 
 
@@ -111,22 +127,25 @@ public class Game {
         GL.createCapabilities();
 
         glClearColor(255,255,255,0);
+        glOrtho(0.f, (int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.8),
+                (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.8), 0.f, 0.f, 1.f);
         while(!glfwWindowShouldClose(this.windowHandle)) {
 
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             this.loadedEntities.forEach(entity -> {
-                System.out.println(entity.toString());
                 if(!entity.isVisible())
                     return;
-                System.out.println("Spawning...");
-                glBegin(GL_QUADS);
+
+                int side = 80;
+
                 glColor3f(0.7f, 0.3f, 0.4f);
-                glVertex2f(entity.getLocation().getX() * -1, entity.getLocation().getY());
-                glVertex2f(entity.getLocation().getX(), entity.getLocation().getY());
-                glVertex2f(entity.getLocation().getX(), entity.getLocation().getY() * -1);
-                glVertex2f(entity.getLocation().getX() * -1, entity.getLocation().getY() * -1);
+                glBegin(GL_QUADS);
+                    glVertex2f(entity.getLocation().getX(), entity.getLocation().getY());
+                    glVertex2f(entity.getLocation().getX(), entity.getLocation().getY()  + side);
+                    glVertex2f(entity.getLocation().getX() + side, entity.getLocation().getY() + side);
+                    glVertex2f(entity.getLocation().getX() + side, entity.getLocation().getY());
                 glEnd();
             });
 
